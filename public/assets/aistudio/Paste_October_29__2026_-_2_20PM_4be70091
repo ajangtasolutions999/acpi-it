@@ -1,0 +1,1380 @@
+# PROJECT: Ajangta IT Solutions: Digital Information System, Forms, IT Asset Management & Ticketing System
+
+## 1. Project Overview
+
+Develop a production-ready, secure, responsive, web-based application for **PT Alliance Consumer Products Indonesia (ACPI)**.
+
+The application will function as a centralized Information Management System and Ticketing System, providing employees with access to company SOPs, IT policies, request forms, approval workflows, IT asset information, and ticket management.
+
+The application must be accessible through modern desktop, tablet, and mobile browsers.
+
+### Core Requirements
+
+1. Users must authenticate before accessing the application.
+2. All modules must be accessible through a unified dashboard, subject to role-based access permissions.
+3. The system must support document management, digital forms, approval workflows, IT asset management, and ticketing.
+4. Forms must automatically generate unique document numbers for traceability and audit purposes.
+5. Approved requests must automatically generate tickets in the appropriate category.
+6. All important actions must be recorded in an audit log.
+7. The interface must be professional, intuitive, responsive, and suitable for a corporate manufacturing environment.
+
+Build a fully functional application, not merely a static UI prototype. 
+
+---
+
+# 2. Application Architecture and Technology
+
+Choose a modern, maintainable technology stack supported by Emergent AI. All apps architecture built on google ecosystem
+
+These are preferred technologies, not rigid requirements. If Emergent AI uses a different well-supported stack, preserve all functional and security requirements.
+
+The database must persist information between sessions and application restarts.
+
+Do not use browser local storage as the primary database for business records.
+
+Separate the application into maintainable modules with appropriate database relationships, validation, and access controls.
+
+---
+
+# 3. Authentication and User Management
+
+Implement a secure login page that users must pass through before accessing any application module.
+
+### Login Requirements
+
+- Username or email and password.
+- Logout functionality.
+- Secure session management.
+- Password hashing.
+- Session expiration and protection against unauthorized access.
+- Password reset functionality or an administrator-managed password reset process.
+- Account activation and deactivation.
+- Appropriate validation and error messages.
+- Protection against common web application vulnerabilities.
+
+Unauthenticated users must not be able to access protected pages, APIs, files, or business records.
+
+### User Profiles
+
+Each user account should contain:
+
+- Employee ID.
+- Full name.
+- Email address.
+- Department.
+- Job title.
+- Assigned role.
+- Account status.
+- Reporting manager, where applicable.
+- Date created.
+- Last login timestamp.
+
+Support role assignment and department-based access restrictions.
+
+### Required Roles
+
+Implement the following application roles:
+
+1. Staff / End User.
+2. Supervisor.
+3. Manager.
+4. General Manager.
+5. Vice President.
+6. IT Staff.
+7. Head of IT.
+8. System Administrator.
+
+A user may hold multiple responsibilities if authorized by the System Administrator.
+
+For example, an IT Staff member may also be a Manager. However, permissions must be calculated from explicitly assigned roles and policies rather than job titles alone.
+
+The Head of IT role must be distinct from the general IT Staff role.
+
+The System Administrator manages application configuration, users, role assignments, and system settings. Administrative access must not automatically imply business approval authority.
+
+---
+
+# 4. Role-Based Access Control
+
+Implement centralized, server-side Role-Based Access Control (RBAC).
+
+Permissions must be enforced by the backend, not just by hiding buttons in the frontend.
+
+Use the following initial permission matrix but editable whenever needed.
+
+| Module / Action | Staff | Supervisor | Manager | General Manager | Vice President | IT Staff | Head of IT | System Admin |
+|---|---|---|---|---|---|---|---|---|
+| View SOPs and IT policies | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| Fill out request forms | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| View approval acknowledgments | No | Yes | Yes | Configurable | Configurable | As authorized | As authorized | As authorized |
+| Approve requests | No | No | Yes | Yes | Yes | Only if separately authorized | Only if separately authorized | Only if separately authorized |
+| View IT asset inventory | Read-only | Read-only | Read-only | Read-only | Read-only | Full access | Full access | Administrative access |
+| Create tickets | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| View own tickets | Yes | Yes | Yes | Yes | Yes | Yes | Yes | Yes |
+| View all tickets | No | No | No | No | No | Yes | Yes | Administrative access |
+| Update ticket status | No | No | No | No | No | Yes | Yes | Only if explicitly authorized |
+| Reopen tickets | No | No | No | No | No | No | Yes | Only if explicitly authorized |
+| Close tickets | No | No | No | No | No | No | Yes | Only if explicitly authorized |
+| Manage SOPs and policies | No | No | No | No | No | Configurable | Yes | Yes |
+| Manage form templates | No | No | No | No | No | Configurable | Yes | Yes |
+| Manage application users and roles | No | No | No | No | No | No | No | Yes |
+| Manage application settings | No | No | No | No | No | No | No | Yes |
+
+Important implementation notes:
+
+- Supervisors and Managers must be able to view approval acknowledgments according to the configured visibility policy.
+- General Managers and Vice Presidents may view approval records if authorized by the company policy.
+- Approval authority must be configurable by form category and organizational hierarchy.
+- IT Staff must have full IT asset management permissions.
+- The Head of IT must have the authority to review, reopen, and close tickets.
+- The System Administrator must not automatically receive approval authority simply because they administer the system.
+- All sensitive permissions must be configurable without changing application source code.
+- System admin can Delete history Ticket, Asset, etc 
+
+Treat this matrix as the initial configuration. Provide an administrative interface for authorized users to adjust permissions.
+
+---
+
+# 5. Unified Dashboard
+
+Create a single dashboard as the main landing page after successful login.
+
+The dashboard should display all available modules in one interface, but the visible modules and actions must depend on the authenticated user's permissions.
+
+### Dashboard Modules
+
+1. SOPs & IT Policies.
+2. Forms & Requests.
+3. Approval Center (inside of this menu have 2 sub menu: My Approval Request & Need My Approval
+4. IT Asset Management.
+5. Ticketing System.
+6. Reports & Analytics.
+7. Notifications.
+8. Administration, visible only to authorized administrators.
+
+### Dashboard Layout
+
+Include:
+
+- Company name: PT Alliance Consumer Products Indonesia.
+- Application name: Information & Ticketing System
+- Company logo placeholder.
+- User name, role, and department.
+- Navigation sidebar on desktop.
+- Collapsible navigation on tablets and mobile devices.
+- Search functionality.
+- Notification center.
+- User profile menu.
+- Logout button.
+
+### Dashboard Summary Cards
+
+Display relevant information based on the user's role:
+
+- Total open tickets.
+- Tickets currently in progress.
+- Tickets pending action.
+- Tickets awaiting approval.
+- Recently submitted requests.
+- Recently approved requests.
+- Recently updated SOPs and policies.
+- Total registered IT assets.
+
+IT Staff and the Head of IT may see broader operational statistics.
+
+End users should primarily see their own tickets, requests, and required actions.
+
+Managers should see approval tasks assigned to them and requests they are authorized to review.
+
+Do not expose confidential information through dashboard summaries.
+
+### Dashboard Charts
+
+Where appropriate, provide charts for:
+
+- Ticket distribution by category.
+- Ticket distribution by status.
+- Monthly ticket volume.
+- Average ticket resolution time.
+- Approval turnaround time.
+- IT asset distribution by department and category.
+
+Charts must use actual database records and must respect user permissions.
+
+Display meaningful empty states when no records exist.
+
+---
+
+# 6. SOP and IT Policy Management
+
+Create a centralized document repository for Standard Operating Procedures (SOPs), IT policies, work instructions, and other authorized information documents.
+
+### Document Fields
+
+Each document must support:
+
+- Document ID.
+- Document title.
+- Document number.
+- Document category.
+- Department or document owner.
+- Description.
+- Document version.
+- Effective date.
+- Review date.
+- Expiration date, if applicable.
+- Uploaded file.
+- Related form templates.
+- Document status.
+- Created by.
+- Created date.
+- Last updated by.
+- Last updated date.
+
+### Supported Functions
+
+Authorized document managers must be able to:
+
+- Upload PDF and other approved document formats.
+- Create and edit document metadata.
+- Publish and archive documents.
+- Upload revised versions.
+- Mark documents as obsolete or superseded.
+- Link an SOP to one or more form templates.
+- Link forms to relevant SOPs.
+- Search and filter documents.
+- View document revision history.
+
+Employees must be able to view and download documents they are authorized to access.
+
+### Document Version Control
+
+When a document is revised, retain its historical versions and publication dates.
+
+Only the current published version should appear as the default version.
+
+Archived and superseded versions must remain available to authorized users for audit purposes.
+
+Prevent ordinary users from modifying published SOPs or IT policies.
+
+---
+
+# 7. Forms and Request Management
+
+Develop a dynamic form management module that allows authorized users to create, publish, and maintain reusable form templates.
+
+The system must support multiple form categories, including:
+
+- IT Access Request.
+- Hardware Request.
+- Software Installation Request.
+- User Account Request.
+- Network Access Request.
+- IT Asset Transfer Request.
+- IT Asset Return Request.
+- IT Maintenance Request.
+- New Procurement Request.
+- Other configurable request categories.
+
+These are initial examples. Administrators must be able to add, modify, or deactivate categories without changing application source code.
+
+### Form Template Management
+
+Authorized administrators must be able to define:
+
+- Form name.
+- Form category.
+- Description.
+- Form fields.
+- Required fields.
+- Input types.
+- Dropdown options.
+- Validation rules.
+- Supporting document requirements.
+- Applicable approval levels.
+- Related SOPs.
+- Form availability by role or department.
+- Whether submission generates a ticket.
+- Ticket category generated after approval.
+
+Supported input types should include:
+
+- Text.
+- Long text.
+- Number.
+- Date.
+- Dropdown.
+- Checkbox.
+- Radio button.
+- File upload.
+- Employee selection.
+- Department selection.
+- Asset selection.
+
+Form templates should be configurable without requiring code changes.
+
+### Form Submission
+
+Users must be able to:
+
+1. Open an available form template.
+2. Read its instructions and linked SOP.
+3. Complete the form.
+4. Save a draft where permitted.
+5. Submit the form.
+6. Receive a unique form reference number.
+7. Track its approval status.
+8. View authorized acknowledgment records.
+9. Download or print the submitted form as a PDF.
+
+Submitted forms must retain a snapshot of the template version and submitted data.
+
+Changes to a form template must not alter historical submissions.
+
+---
+
+# 8. Automatic Form Numbering
+
+Implement an automatic numbering system for all form submissions and printable form documents.
+
+### Required Number Format
+
+ACPI-HR-IT-FormType-Year-Month-Number
+
+Example:
+
+ACPI-HR-IT-AccessRequest-2026-10-000
+
+Additional examples:
+
+- ACPI-HR-IT-HardwareRequest-2026-10-001
+- ACPI-HR-IT-AssetTransfer-2026-10-002
+- ACPI-HR-IT-NewProcurement-2026-10-003
+
+Use a normalized form type or category code rather than unrestricted user-entered text.
+
+The final format must be configurable in the administrative settings.
+
+### Numbering Rules
+
+1. Generate the number automatically when a submission is formally created or submitted.
+2. Use the actual submission year and month.
+3. Start numbering at 000 for the first record within the configured numbering scope.
+4. Increment the number for subsequent records within the same scope.
+5. Define the numbering scope as form category + year + month.
+6. Generate numbers on the server.
+7. Use a database transaction or equivalent concurrency-safe mechanism to prevent duplicate numbers when multiple users submit forms simultaneously.
+8. Preserve numbering permanently after assignment.
+9. Never reuse a previously assigned number, even if the submission is cancelled or rejected.
+10. Do not assign official numbers to temporary drafts unless the company explicitly configures that behavior.
+11. Ensure the number remains unchanged when a form is printed, downloaded, approved, rejected, or converted into a ticket.
+12. Allow authorized users to search submissions using the form reference number.
+
+Use a minimum three-digit sequence: 000–999. If the number exceeds 999, expand the sequence to four digits and continue incrementing without resetting or producing duplicates.
+
+Clarify that the `HR` segment in the requested numbering format is a fixed company document-prefix component, not an indication that the form belongs exclusively to the HR department.
+
+### Printable Form Output
+
+Generate a professional PDF document containing:
+
+- ACPI logo placeholder.
+- Company name.
+- Form title.
+- Unique form reference number.
+- Submission date.
+- Requester name.
+- Requester department.
+- Form data.
+- Approval history, when applicable.
+- Current request status.
+- Signature fields, if required by the form template.
+- QR code or barcode containing the reference number, where supported.
+
+The document must be suitable for printing and audit records.
+
+---
+
+# 9. Approval Workflow
+
+Implement a configurable approval workflow for request forms.
+
+### Workflow Overview
+
+The default workflow should be:
+
+Draft → Submitted → Pending Approval → Approved / Rejected → Ticket Created, where applicable.
+
+Support additional states such as Returned for Revision and Cancelled where appropriate.
+
+### Approval Rules
+
+- Staff members can submit request forms.
+- Supervisors and Managers can view approval acknowledgments according to their permissions.
+- Managers, General Managers, and Vice Presidents can approve or reject requests when they have the required authorization.
+- Approval authority must be configurable by form category, department, organizational hierarchy, and approval level.
+- A request may require one or multiple approvals.
+- The system must identify the currently assigned approver.
+- A user must not approve a request unless they are authorized to do so.
+- A requester must not approve their own request unless an explicit, documented exception is configured.
+- Rejections must require a reason.
+- Requests returned for revision must allow the requester to make corrections and resubmit.
+- Previous approval decisions must remain in the history.
+- Each approval action must record the approver, timestamp, decision, and comments.
+
+### Approval Center
+
+Create an Approval Center for authorized approvers.
+
+It should display:
+
+- Pending approvals.
+- Form reference number.
+- Form category.
+- Requester.
+- Department.
+- Submission date.
+- Current approval level.
+- Time waiting for approval.
+- Request details.
+- Attached documents.
+- Linked SOPs.
+
+Approvers must be able to open a request, review its contents, approve it, reject it, or return it for revision according to their permissions.
+
+### Approval Notifications
+
+Provide in-application notifications when:
+
+- A request is submitted.
+- A request is assigned for approval.
+- A request is approved.
+- A request is rejected.
+- A request is returned for revision.
+- A request is converted into a ticket.
+
+Email notifications may be supported through configurable SMTP or an approved email service.
+
+Do not hardcode email credentials.
+
+---
+
+# 10. Automatic Ticket Creation from Approved Requests
+
+When a request is approved, the system must automatically create a corresponding ticket if the form template is configured to generate one.
+
+### Mapping Rules
+
+| Form Category | Ticket Category |
+|---|---|
+| General IT Request | Request |
+| Hardware Request | Request |
+| Software Installation Request | Request |
+| IT Access Request | Request |
+| Network Access Request | Request |
+| IT Maintenance Request | Incident or Request, based on template configuration |
+| New Procurement Request | New Procurement |
+| Other categories | Administrator-configurable |
+
+The ticket category must be determined by the form template configuration, not solely by its displayed name.
+
+### Automatic Ticket Creation Requirements
+
+- Generate a unique ticket number.
+- Link the ticket to the original form submission.
+- Preserve the original form reference number.
+- Copy relevant form details into the ticket.
+- Associate the requester and department.
+- Preserve supporting attachments or provide secure links to them.
+- Set the initial ticket status to Open.
+- Assign the ticket according to the configured routing rules.
+- Record the automatic ticket creation event in the audit log.
+- Prevent duplicate ticket creation if the approval process is retried.
+
+If a form is approved but ticket creation fails, preserve the approval result and record a recoverable error. Allow authorized system processes or administrators to retry ticket creation safely.
+
+Display the resulting ticket number on the approved form record.
+
+---
+
+# 11. IT Asset Management
+
+Create an IT Asset Management module to maintain a centralized inventory of company IT equipment and related assets.
+
+### Required Asset Fields
+
+- Unique asset ID.
+- Item name.
+- Item type/category.
+- Brand.
+- Model.
+- Serial number, where applicable.
+- Vendor/supplier name.
+- Vendor contact.
+- Purchase date or contract start date.
+- Purchase price or contract value.
+- Asset location.
+- Assigned employee/user name.
+- Employee ID, where applicable.
+- Department.
+- Asset status.
+- Warranty start date, where applicable.
+- Warranty expiration date, where applicable.
+- Contract end date, where applicable.
+- Remarks.
+- Supporting documents, where applicable.
+- Created by.
+- Created date.
+- Last updated by.
+- Last updated date.
+
+The asset ID must be unique and generated automatically.
+
+Support asset categories such as:
+
+- Laptop.
+- Desktop computer.
+- Server.
+- Network equipment.
+- Wi-Fi access point.
+- Switch.
+- Router.
+- Firewall.
+- Printer.
+- CCTV.
+- Storage/NAS.
+- Scanner.
+- Biometric device.
+- Software license.
+- Internet service.
+- Other configurable categories.
+
+### Asset Access Permissions
+
+**General users:**
+- View asset records they are authorized to access.
+- Search and filter the inventory.
+- View permitted asset details.
+- Cannot create, edit, delete, or transfer assets.
+
+**IT Staff:**
+- Create asset records.
+- Edit asset information.
+- Assign assets to employees and departments.
+- Transfer assets between locations or users.
+- Update asset status.
+- Record maintenance history.
+- Upload purchase invoices, warranty documents, and related records.
+- View asset history.
+- Generate asset reports.
+- Manage inventory records.
+
+**Head of IT:**
+- Perform all IT asset management operations.
+- Review asset records and changes.
+- Access asset management reports.
+
+**System Administrator:**
+- Manage application configuration and access controls.
+- Asset editing permissions must be explicitly configurable rather than automatically granted.
+
+### Asset Statuses
+
+Support configurable asset statuses, including:
+
+- In Stock.
+- Assigned.
+- In Maintenance.
+- Under Warranty Claim.
+- Returned.
+- Retired.
+- Disposed.
+
+### Asset History
+
+Do not overwrite important historical assignment information.
+
+Maintain a history of:
+
+- Employee assignments.
+- Department transfers.
+- Location changes.
+- Status changes.
+- Maintenance records.
+- Warranty and contract updates.
+
+Where an asset is transferred between employees or departments, record the old and new values, the person performing the change, and the timestamp.
+
+### Asset Search and Reporting
+
+Support filters for:
+
+- Asset ID.
+- Item name.
+- Category.
+- Brand.
+- Vendor.
+- Location.
+- Assigned user.
+- Department.
+- Status.
+- Warranty expiration.
+- Contract expiration.
+
+Provide export functionality to Excel-compatible CSV and PDF, subject to permissions.
+
+Sensitive commercial information, including purchase prices and contract values, must have configurable field-level visibility.
+
+---
+
+# 12. IT Ticketing System
+
+Develop a centralized ticketing system with three main ticket categories:
+
+1. Request.
+2. Incident.
+3. New Procurement.
+
+The system must support tickets created directly by users and tickets automatically generated from approved request forms.
+
+### Ticket Creation
+
+End users must be able to create tickets with the following fields:
+
+- Ticket number, generated automatically.
+- Ticket category.
+- Subject/title.
+- Description.
+- Requester name.
+- Department.
+- Contact information, where necessary.
+- Location.
+- Priority.
+- Attachment.
+- Related form reference, if applicable.
+- Related asset, if applicable.
+- Creation date.
+- Current status.
+- Assigned IT staff, where applicable.
+
+### Ticket Number Format
+
+Use a configurable format such as:
+
+ACPI-IT-2026-10-0001
+
+Requirements:
+
+- Unique across the entire application.
+- Generated automatically on the server.
+- Concurrency-safe.
+- Searchable.
+- Permanent after assignment.
+- Independent of the linked form reference number.
+
+### Ticket Categories
+
+**A. Request**
+
+For routine IT services, including:
+
+- Hardware requests.
+- Software installation.
+- User account access.
+- Network access.
+- IT asset transfer.
+- General IT support.
+
+**B. Incident**
+
+For unplanned interruptions or degradation, including:
+
+- Internet connectivity issues.
+- Network failures.
+- Computer or laptop problems.
+- Printer failures.
+- SAP or WMS access problems.
+- Email issues.
+- Wi-Fi issues.
+- Server or application problems.
+
+**C. New Procurement**
+
+For new IT equipment, hardware, software licenses, subscriptions, and other procurement requests.
+
+Procurement tickets should support relevant fields such as:
+
+- Item description.
+- Quantity.
+- Estimated unit price.
+- Estimated total cost.
+- Business justification.
+- Required date.
+- Vendor quotation attachments.
+- Procurement status.
+- Related approved request form.
+
+These procurement fields must not replace or bypass the required request approval workflow.
+
+---
+
+# 13. Ticket Status and Lifecycle
+
+Implement the following ticket statuses:
+
+- Open.
+- In Progress.
+- Pending.
+- Solved.
+- Closed.
+
+### Status Definitions
+
+**Open:** The ticket has been created and is awaiting assignment or initial action.
+
+**In Progress:** IT is actively working on the ticket.
+
+**Pending:** Work is temporarily waiting for user feedback, vendor support, approval, spare parts, or another dependency.
+
+**Solved:** The reported issue has been resolved or the requested work has been completed, awaiting final confirmation or closure.
+
+**Closed:** The ticket has been formally closed by the Head of IT.
+
+### Role-Based Ticket Actions
+
+**End Users:**
+- Create tickets.
+- View their own tickets.
+- View ticket status and history.
+- Add comments or requested information to their tickets.
+- Upload supporting attachments where permitted.
+- Confirm resolution, where the workflow allows it.
+- Request reopening or report that the issue remains unresolved.
+- Follow up ticket
+
+End users must not directly change a ticket's official status.
+
+**IT Staff:**
+- View and manage tickets assigned to them or within their authorized scope.
+- Update ticket statuses to Open, In Progress, Pending, or Solved.
+- Add internal work notes.
+- Add user-visible comments.
+- Upload relevant attachments.
+- Record troubleshooting steps.
+- Record resolution details.
+- Assign tickets to authorized IT staff if permitted.
+
+IT Staff must not directly close or reopen tickets unless explicitly authorized through a separate permission.
+
+**Head of IT:**
+- View all tickets.
+- Review ticket details and activity history.
+- Update ticket status.
+- Reopen a solved or closed ticket when further work is required.
+- Close solved tickets.
+- Return tickets to Open or In Progress where appropriate.
+- Review overdue tickets and service performance.
+- View ticket statistics and reports.
+
+### Ticket Lifecycle
+
+Implement a controlled transition model:
+
+Open → In Progress → Pending → In Progress → Solved → Closed.
+
+Allow valid transitions back to Open or In Progress where necessary.
+
+Only the Head of IT may perform the official Re-Open or Closed action by default.
+
+Record the reopening event in the ticket history, including the reason, actor, and timestamp.
+
+The Re-Open action should return the ticket to an active status, such as Open, rather than permanently replacing the standard status vocabulary with an additional status.
+
+Prevent unauthorized or invalid status transitions on the backend.
+
+---
+
+# 14. Ticket Assignment and Work Management
+
+Implement ticket assignment and workload visibility.
+
+Each ticket should support:
+
+- Assigned IT staff.
+- Assignment date.
+- Priority.
+- Due date, where applicable.
+- Internal notes.
+- User-visible comments.
+- Work logs.
+- Resolution summary.
+- Closure comments.
+- Ticket activity history.
+
+### Priority Levels
+
+Use configurable priority levels:
+
+- Low.
+- Normal.
+- High.
+- Critical.
+
+### Ticket Filters
+
+Users should be able to filter tickets by the records they are authorized to see.
+
+Provide filters for:
+
+- Ticket number.
+- Category.
+- Status.
+- Priority.
+- Requester.
+- Department.
+- Assigned IT staff.
+- Location.
+- Created date.
+- Last updated date.
+- Related form number.
+
+### Ticket Details Page
+
+The ticket details page must show:
+
+- Ticket information.
+- Current status.
+- Requester information.
+- Assigned IT staff.
+- Related form reference.
+- Related asset.
+- Attachments.
+- Comments.
+- Work logs.
+- Status history.
+- Approval history, where applicable.
+
+Use clear visual status indicators and a chronological activity timeline.
+
+Internal notes must never be visible to end users.
+
+---
+
+# 15. Notifications and Reminders
+
+Create a centralized notification system.
+
+Support in-application notifications for:
+
+- Form submissions.
+- Pending approvals.
+- Approval decisions.
+- Returned or rejected requests.
+- Automatic ticket creation.
+- Ticket assignment.
+- Ticket status changes.
+- Requests for additional information.
+- Ticket resolution.
+- Ticket reopening.
+- Ticket closure.
+- Approaching warranty expiration.
+- Approaching contract expiration.
+
+Notifications must respect role permissions and record visibility.
+
+Allow users to mark notifications as read.
+
+Email notifications should be configurable and optional.
+
+Avoid sending duplicate notifications when background jobs retry.
+
+---
+
+# 16. Audit Trail and Document Traceability
+
+Auditability is a critical requirement.
+
+Implement an append-only audit log for important business and administrative events.
+
+### Events to Record
+
+- Successful and failed login attempts.
+- User creation and deactivation.
+- Role and permission changes.
+- Form template creation and revision.
+- Form submission.
+- Form reference number generation.
+- Form approval and rejection.
+- Form cancellation.
+- Ticket creation.
+- Ticket assignment.
+- Ticket status changes.
+- Ticket reopening and closure.
+- Asset creation and modification.
+- Asset assignment and transfer.
+- SOP upload, revision, publication, and archival.
+- Permission changes.
+- Important configuration changes.
+- File downloads for designated sensitive documents, where appropriate.
+
+### Audit Log Fields
+
+- Event ID.
+- Timestamp.
+- Actor user ID.
+- Actor name, where available.
+- Action.
+- Affected module.
+- Affected record ID.
+- Previous value, where applicable.
+- New value, where applicable.
+- Reason or comments, where applicable.
+- Request or correlation ID.
+- Source IP address, where available and appropriate.
+
+Audit logs must not be editable or deletable by ordinary users.
+
+Sensitive values, such as passwords, authentication tokens, and secrets, must never be written to audit logs.
+
+Provide authorized users with audit search and export functionality.
+
+---
+
+# 17. Search, Reports, and Exports
+
+Provide a global search function for authorized information.
+
+Search should cover:
+
+- SOP titles and document numbers.
+- Policy documents.
+- Form reference numbers.
+- Requester names.
+- Ticket numbers.
+- Ticket subjects.
+- Asset IDs.
+- Asset names.
+- Employee names.
+- Department names.
+
+Search results must respect the user's permissions.
+
+### Reports
+
+Provide reports for:
+
+- Ticket counts by category and status.
+- Ticket counts by department.
+- Ticket resolution time.
+- Open and overdue tickets.
+- Monthly ticket volume.
+- Approval turnaround time.
+- Rejected and cancelled requests.
+- IT asset inventory.
+- Asset assignments by department.
+- Assets by location and status.
+- Warranty and contract expiration.
+- Procurement requests by status.
+- Audit history.
+
+Support date-range filtering.
+
+Provide CSV/Excel-compatible and PDF export options where appropriate.
+
+All exports must enforce the same authorization rules as the underlying records.
+
+---
+
+# 18. Responsive User Interface
+
+The application must work properly on:
+
+- Desktop browsers.
+- Laptop browsers.
+- Tablets.
+- Mobile browsers.
+
+Do not build a desktop-only interface.
+
+### Design Guidelines
+
+Use a professional corporate interface with:
+
+- Clean layout.
+- Consistent typography.
+- Neutral corporate colors.
+- Readable tables.
+- Clear buttons.
+- Responsive forms.
+- Accessible status indicators.
+- Appropriate spacing.
+- Searchable dropdowns.
+- Pagination for large datasets.
+- Loading indicators.
+- Confirmation dialogs for important actions.
+- Helpful error messages.
+- Empty-state messages.
+- Mobile-friendly navigation.
+
+Use tables on desktop and responsive cards or horizontally scrollable tables on mobile where appropriate.
+
+Avoid unnecessary animations and oversized decorative elements.
+
+Prioritize usability and fast access to common tasks.
+
+---
+
+# 19. Database Design
+
+Create a normalized relational database with appropriate primary keys, foreign keys, indexes, constraints, and timestamps.
+
+At a minimum, implement the following entities:
+
+1. Users.
+2. Roles.
+3. Permissions.
+4. UserRoles.
+5. Departments.
+6. SOPDocuments.
+7. SOPDocumentVersions.
+8. FormCategories.
+9. FormTemplates.
+10. FormTemplateVersions.
+11. FormSubmissions.
+12. FormSubmissionAttachments.
+13. ApprovalWorkflows.
+14. ApprovalWorkflowSteps.
+15. ApprovalRecords.
+16. TicketCategories.
+17. Tickets.
+18. TicketAssignments.
+19. TicketComments.
+20. TicketWorkLogs.
+21. TicketStatusHistory.
+22. Assets.
+23. AssetAssignments.
+24. AssetMaintenanceRecords.
+25. AssetAttachments.
+26. Vendors.
+27. Notifications.
+28. AuditLogs.
+29. ApplicationSettings.
+30. NumberSequences.
+
+Additional tables may be created where needed.
+
+### Database Requirements
+
+- Use stable internal record IDs, such as UUIDs, where appropriate.
+- Enforce unique form and ticket reference numbers.
+- Enforce referential integrity.
+- Add indexes for common searches and filters.
+- Use database transactions for critical operations.
+- Prevent duplicate ticket creation from the same approval event.
+- Preserve historical form and document versions.
+- Use soft deletion or archival for important business records.
+- Define retention and archival policies for audit records.
+- Use UTC internally for timestamps where practical and display dates in the Asia/Jakarta time zone.
+- Store monetary values with appropriate decimal precision and identify the currency, defaulting to IDR for ACPI Indonesia.
+- Support database backup and restoration procedures.
+
+Do not hard-delete approved forms, tickets, or important asset history records through ordinary user interfaces.
+
+---
+
+# 20. Security Requirements
+
+Implement appropriate application security controls.
+
+These must include:
+
+- Backend-enforced authorization.
+- Secure password hashing.
+- Secure session handling.
+- Protection against SQL injection.
+- Cross-Site Scripting (XSS) protection.
+- Cross-Site Request Forgery (CSRF) protection where applicable.
+- Rate limiting for authentication endpoints.
+- Input validation and output encoding.
+- File type and file size validation.
+- Secure file download authorization.
+- Protection against unauthorized object access.
+- Safe error handling without exposing secrets.
+- HTTPS-ready deployment.
+- Environment-based secret management.
+- Database backup procedures.
+- Appropriate logging and monitoring.
+
+Prevent users from accessing another employee's private tickets or request records by modifying a URL, record ID, or API request.
+
+Validate uploaded files and prevent executable or malicious files from being served as trusted documents.
+
+Do not expose database credentials, API keys, SMTP passwords, or other secrets in frontend code.
+
+---
+
+# 21. Administrative Settings
+
+Create an Administration module accessible only to authorized administrators.
+
+It should support:
+
+- User and account management.
+- Role and permission management.
+- Department management.
+- Form category management.
+- Form template management.
+- Ticket category configuration.
+- Approval workflow configuration.
+- Ticket assignment rules.
+- Ticket priority configuration.
+- Asset category management.
+- Document category management.
+- Notification settings.
+- Reference number format configuration.
+- Number sequence management with safeguards.
+- Company information and logo.
+- Time zone and date format settings.
+- File upload limits.
+- Audit log access.
+- Backup and maintenance settings
+
+Important settings must be stored in the database or environment configuration, not hardcoded throughout the application.
+
+Changes to numbering rules must not alter numbers already assigned to existing records.
+
+---
+
+# 22. Sample Data and Initial Setup
+
+Provide a first-run setup process.
+
+Create a secure way to initialize the first System Administrator.
+
+Do not ship a publicly known default administrator password.
+
+Provide an optional development/demo seed dataset containing:
+
+- Example users for different roles.
+- Example departments.
+- Example SOPs and IT policies.
+- Example request forms.
+- Example form submissions.
+- Example approval workflows.
+- Example IT assets.
+- Example tickets in different categories and statuses.
+- Example notifications.
+
+Demo records must be clearly identified as sample data.
+
+Production deployment must allow demo data to be disabled or excluded.
+
+Never expose real employee data in demonstration accounts.
+
+---
+
+# 23. Functional Acceptance Tests
+
+Before declaring the application complete, implement and test the following scenarios.
+
+### Test 1: Authentication
+
+- An unauthenticated visitor cannot access the dashboard.
+- A valid user can log in and log out.
+- A deactivated user cannot log in.
+- Protected APIs reject unauthorized requests.
+
+### Test 2: Role-Based Access
+
+- Staff can view SOPs and submit available forms.
+- Staff cannot approve requests.
+- Managers with approval authority can approve assigned requests.
+- IT Staff can manage IT assets.
+- General users cannot modify IT asset records.
+- IT Staff cannot close tickets without the required permission.
+- The Head of IT can reopen and close tickets.
+- System administrators cannot approve business requests unless separately authorized.
+
+### Test 3: Form Numbering
+
+- The first submitted form in a numbering scope receives sequence 000.
+- Subsequent submissions increment the sequence.
+- Different categories have independent numbering sequences.
+- A new month starts a new monthly sequence.
+- Concurrent submissions cannot generate duplicate numbers.
+- Cancelled and rejected forms retain their assigned numbers.
+- Drafts do not receive official numbers unless configured to do so.
+
+### Test 4: Approval Workflow
+
+- A request is assigned to the correct approver.
+- Unauthorized users cannot approve it.
+- Approval actions record the approver and timestamp.
+- Rejection requires a reason.
+- Returned forms can be corrected and resubmitted.
+- Approval history remains available.
+
+### Test 5: Automatic Ticket Creation
+
+- An approved form generates a ticket when configured.
+- The ticket category matches the configured mapping.
+- The ticket contains the original form reference.
+- Retrying a failed process does not create duplicate tickets.
+- Failed ticket creation does not erase the approval decision.
+
+### Test 6: Ticket Management
+
+- End users can create tickets and view their own tickets.
+- IT Staff can update permitted ticket statuses.
+- Internal notes are hidden from end users.
+- Unauthorized status transitions are rejected.
+- Only authorized users can reopen or close tickets.
+- All status changes appear in the ticket history.
+
+### Test 7: Asset Management
+
+- IT Staff can create and update asset records.
+- General users can view permitted asset information but cannot modify it.
+- Asset transfers retain the previous assignment history.
+- Asset searches and reports return correct records.
+
+### Test 8: Document Management
+
+- Authorized users can upload and publish SOPs.
+- Forms can link to SOPs.
+- Revised SOPs retain historical versions.
+- Unauthorized users cannot access restricted documents.
+
+### Test 9: Audit Trail
+
+- Important operations generate audit records.
+- Audit records preserve actor, timestamp, and relevant changes.
+- Ordinary users cannot modify or delete audit records.
+
+### Test 10: Responsive Design
+
+- All primary modules work on desktop, tablet, and mobile browsers.
+- Forms can be completed on mobile devices.
+- Tables remain usable on small screens.
+- Navigation works on all supported screen sizes.
+
+### Test 11: Persistence
+
+- Business records survive browser refreshes.
+- Data remains available after users log out and back in.
+- Records persist after application restarts.
+- Database backup and restoration procedures are documented and tested.
+
+---
+
+# 24. Development and Delivery Requirements
+
+Develop the application in functional stages while preserving the overall architecture.
+
+### Phase 1: Foundation
+
+- Database and backend setup.
+- Authentication.
+- User management.
+- Role-based access control.
+- Responsive dashboard.
+
+### Phase 2: Information Management
+
+- SOP and IT policy repository.
+- Document version control.
+- Form template management.
+- Form submissions.
+- Automatic form numbering.
+- PDF generation.
+
+### Phase 3: Approval Workflow
+
+- Configurable approval rules.
+- Approval Center.
+- Approval notifications.
+- Approval history.
+- Automatic ticket creation after approval.
+
+### Phase 4: IT Asset Management
+
+- Asset inventory.
+- Asset assignments.
+- Asset history.
+- Maintenance records.
+- Inventory reports.
+
+### Phase 5: Ticketing
+
+- Ticket creation.
+- Ticket categories.
+- Ticket assignment.
+- Ticket status lifecycle.
+- Comments and work logs.
+- Ticket notifications.
+- Head of IT review and closure.
+
+### Phase 6: Reporting and Audit
+
+- Dashboard analytics.
+- Reports and exports.
+- Audit trail.
+- Administrative configuration.
+
+### Phase 7: Testing and Deployment
+
+- Functional testing.
+- Security testing.
+- Responsive testing.
+- Database backup testing.
+- Deployment documentation.
+
+These phases are implementation priorities, not permission to leave the application with nonfunctional modules. Complete the essential workflows end to end before considering the project finished.
+
+### Required Deliverables
+
+Provide:
+
+1. A working web application.
+2. Complete source code.
+3. Database schema and migrations.
+4. Secure initial administrator setup.
+5. Sample data or demo mode.
+6. Environment variable example file without real secrets.
+7. Installation and deployment instructions.
+8. Database backup and restoration instructions.
+9. User and role configuration instructions.
+10. Documentation explaining the form numbering system.
+11. Documentation explaining approval and ticket workflows.
+12. A list of completed acceptance tests and their results.
+
+Do not claim a feature is complete unless it has been implemented and tested.
+
+If any requirement cannot be completed within the available implementation scope, explicitly identify the limitation rather than presenting a nonfunctional placeholder as a completed feature.
+
+---
+
+# 25. Final Development Instructions
+
+Begin by translating the requirements into a clear implementation plan, database model, permission model, and workflow design.
+
+Then proceed with implementation.
+
+Prioritize the following business-critical requirements:
+
+1. Secure authentication and role-based access control.
+2. A unified, responsive dashboard.
+3. SOP and IT policy management.
+4. Configurable forms with unique, automatic reference numbers.
+5. Configurable approval workflows.
+6. Automatic ticket creation following approval.
+7. IT asset inventory with restricted editing.
+8. Role-based ticket management and controlled ticket closure.
+9. Audit trails and document traceability.
+10. Persistent storage, reliable error handling, and tested workflows.
+
+Make sensible implementation decisions without repeatedly asking for confirmation on routine technical choices.
+
+Where company-specific policies are not yet defined, use configurable defaults and document the assumptions.
+
+**The final result must be a secure, maintainable, responsive, database-backed ACPI Information Management and IT Ticketing System that works end to end on desktop, tablet, and mobile browsers.**

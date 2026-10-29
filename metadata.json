@@ -1,0 +1,6 @@
+{
+  "name": "ACPI Information & Ticketing System",
+  "description": "Centralized Information Management, Digital Forms, Approval Workflows, IT Asset Management and Ticketing System for PT Alliance Consumer Products Indonesia.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
